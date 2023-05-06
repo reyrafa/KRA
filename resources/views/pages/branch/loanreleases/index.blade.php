@@ -5,22 +5,24 @@
         </h2>
     </x-slot>
     <div class="row mt-5 ">
+    @foreach($systemUser as $sysUser)
+       @if($sysUser->branchUnderID !=23)
         <div class="col-md-7 mb-3"></div>
         <div class="col-md-2 mb-3">
             <a href="/generateExcelFileLoanReleases" class="btn" style="background: #7f5200; color: white;"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Generate Excel File</a>
         </div>
         <div class="col-md-3 mb-3">
-       @foreach($systemUser as $sysUser)
-       @if($sysUser->branchUnderID !=23)
             <a href="/branch/importing/files/import" class="btn btn-primary"><i class="fas fa-file-upload "></i>  Import Excel File</a>
-            
+              
+        </div>
         @endif
         @endforeach
-        </div>
         <div class="col-md-1"></div>
         <div class="col-md-10">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
                <div class="table-responsive">
+                @foreach($systemUser as $sysUser)
+                @if($sysUser->branchUnderID !=23)
                 <table class="table hover table-bordered border-collapse stripe" id="myTable">
                     <thead>
                         <th class="border">Upload No</th>
@@ -61,6 +63,53 @@
                        @endforeach            
                     </tbody>
                 </table>
+
+                @else
+                <!---------------------------------------------->
+                <!-- for the head office generation of report -->
+                <!---------------------------------------------->
+                <!---------------------------------------------->
+
+                <table class="table hover table-bordered border-collapse stripe" id="myTable2">
+                    <thead>
+                        <th class="border">#</th>
+                        <th class="border">Year</th>
+                        <th class="border">Action</th>
+                       
+                    </thead>
+                    <tbody>
+                        @php 
+                            $count = 0;
+                            $startingYear = 2022;
+                            $endingYear = date('Y');
+                            $noFile = 0;
+                        @endphp
+                       @while($startingYear<=$endingYear)
+                            <tr>
+                                @foreach ($fileUpload as $fileInfo)
+                                    @if($startingYear == $fileInfo->yearUploadID)
+                                        @php
+                                            $noFile++;
+                                        @endphp                       
+                                    @endif
+                                @endforeach
+                                <td class="border">{{++$count}}</td>       
+                                <td class="border"><label for="" id="uploadYear">{{$startingYear}}</label> <label for="" id="noOfUpload"> {{$noFile++;}} <i id="iconForUpload" class="fa-solid fa-up-long"></i></label></td>
+                                <td class="border">
+                                    <a href={{"/branch/importing/files/view/headOffice/".$startingYear}} class="btn btn-primary bt1"><i class="fa-regular fa-folder-open"></i></a>
+                                    <a href={{"/branch/importing/files/YearReport/".$startingYear}} class="btn btn-info bt2"><i class="fa-solid fa-file-csv"></i></a>
+                                </td>
+                                @php
+                                    $noFile=0;
+                                    $startingYear++;
+                                @endphp
+                            </tr>
+                       @endwhile     
+                    </tbody>
+                </table>
+
+                @endif
+                @endforeach
                </div>
             </div>
         </div>
@@ -126,15 +175,47 @@
                    "order" :[[0, "asc"]],
                    "columnDefs": [
                         {"className": "dt-center", "targets": "_all"}
-            ]
-                   
-                  
+                    ]
                 });
 
                 $(document).on('click', '.delete', function(){
                 var id = $(this).data('id');
                 $('#deleteID').val(id)
             })
+
+
+
+            dtable2 = $('#myTable2').DataTable({
+                      /* serverSide: true,
+                    ajax: {
+                        url : '{{ url("loan_list") }}' ,
+                        
+                    },
+                    "buttons": true,
+                    "searching": true,
+                    scrollX: true,
+                    scrollY: 500,
+                    scrollCollapse: true,
+                    columns: [
+                        {data: 'accountName', classname:'accountName'},
+                        {data: 'accountNumber', classname:'accountNumber'},
+                        {data: 'grantedDate', classname:'grantedDate'},
+                        {data: 'principalBalance', classname:'principalBalance'},
+                        {data: 'loanTerms', classname:'loanTerms'},
+                        {data: 'transactionAmount', classname:'transactionAmount'},
+                        {data: 'loanTypeDesc', classname:'loanTypeDesc'},
+                        {data: 'monthUpload', classname:'monthUpload'},
+                        {data: 'created_at', footer:'created_at'},
+                    ],*/
+                   "lengthMenu": [5, 10, 20, 50],
+                   "bLengthChange": true,
+                   "order" :[[0, "asc"]],
+                   "columnDefs": [
+                        {"className": "dt-center", "targets": "_all"}
+            ]
+                   
+                  
+                });
                 
      
     } );
@@ -150,6 +231,32 @@
             margin: 10px 0;
             }
             th.dt-center, td.dt-center { text-align: center; }
+
+            #noOfUpload{
+                background:green; 
+                color:white; 
+                padding-left: 20px;
+                padding-right: 20px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                margin-left: 15px;
+                border-radius:5px
+            }
+            #iconForUpload{
+                margin-left: 25px;
+            }
+            #uploadYear{
+                font-size: 1.2em;
+                font-weight: 500;
+            }
+            .bt1{
+                margin-left: 15px;
+                font-size: 1.2em;
+            }
+            .bt2{
+
+                font-size: 1.2em;
+            }
         </style>
     @endpush
     

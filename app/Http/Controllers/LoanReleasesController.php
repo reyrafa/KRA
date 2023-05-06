@@ -314,6 +314,31 @@ class LoanReleasesController extends Controller
     }
 
 
+    public function viewMonths($year){
+        $sysUsers = SystemUserModel::all();
+        $branches = BranchUnderModel::all();
+ 
+        $fileUpload = FileUploadModel::all()->where('yearUploadID', $year);
+        return view('pages.branch.loanreleases.viewMonth', compact('fileUpload', 'year', 'sysUsers', 'branches'));
+    }
+
+    public function showNoUploadMonth(Request $req){
+        $data = FileUploadModel::where(['yearUploadID' => $req->year, 'monthUploadID' => $req->id])->get();
+        $branch = BranchUnderModel::all();
+       /* $data = '';
+
+        foreach ($fileUpload as $fileUP) {
+            foreach($branch as $branchInfo){
+                if($fileUP->branchUnderID == $branchInfo->id){
+                    $data = $data." ".$branchInfo->branchName;
+                   
+                }
+            }
+        }*/
+     
+        return response()->json($data);
+    }
+
 
     //delete record
     public function deleteRecord(Request $req){

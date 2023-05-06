@@ -44,7 +44,7 @@ class ExportingExcelController extends Controller
             //== GETTING THE DATA ON FILEUPLOAD AND LOAN RELEASES TABLE==/
             $currentYearUpload = FileUploadModel::all()->where('branchUnderID', $branchUnderId);
             $loanReleases = LoanReleasesModel::all();
-            $SortingcurrentMonthOnUpload = FileUploadModel::max('monthUploadID');
+            $SortingcurrentMonthOnUpload = FileUploadModel::where(['branchUnderID' => $branchUnderId, 'yearUploadID' => date('Y')])->max('monthUploadID');
             $currentMonthOnUpload = date("F", mktime(0, 0, 0, $SortingcurrentMonthOnUpload, 10));
             $startingLetterForMonth = 'C';
             $ascii1 = ord($startingLetterForMonth);

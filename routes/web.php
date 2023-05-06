@@ -6,6 +6,8 @@ use App\Http\Controllers\LoanReleasesController;
 use App\Http\Controllers\LoginHistory;
 use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ShowBranches;
 use App\Http\Controllers\UserManagementController;
 use App\Models\BranchUnderModel;
 use App\Models\LoanReleasesModel;
@@ -41,49 +43,57 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/usermanagement', [UserManagementController::class, 'index'])->name('usermanagement')->middleware('isAdmin');
+Route::get('/usermanagement', [UserManagementController::class, 'index'])->name('usermanagement')->middleware('isAdmin', 'auth:sanctum');
 
-Route::get('/usermanagement/addofficer', [UserManagementController::class, 'addofficer'])->middleware('isAdmin');
+Route::get('/usermanagement/addofficer', [UserManagementController::class, 'addofficer'])->middleware('isAdmin', 'auth:sanctum');
 
 Route::get('/findBranchUnder', [UserManagementController::class, 'findBranchUnder']);
 
-Route::get('/validateCompanyID', [UserManagementController::class, 'validateCompanyID'])->middleware('isAdmin');
+Route::get('/validateCompanyID', [UserManagementController::class, 'validateCompanyID'])->middleware('isAdmin', 'auth:sanctum');
 
-Route::post('/usermanagement/add/systemuser', [UserManagementController::class, 'adduser'])->middleware('isAdmin');
+Route::post('/usermanagement/add/systemuser', [UserManagementController::class, 'adduser'])->middleware('isAdmin', 'auth:sanctum');
 
-Route::get('/usermanagement/updatepage/{UID}', [UserManagementController::class, 'updatePage'])->middleware('isAdmin');
+Route::get('/usermanagement/updatepage/{UID}', [UserManagementController::class, 'updatePage'])->middleware('isAdmin', 'auth:sanctum');
 
-Route::post('/usermanagement/update/systemuser', [UserManagementController::class, 'updateOfficer'])->middleware('isAdmin');
+Route::post('/usermanagement/update/systemuser', [UserManagementController::class, 'updateOfficer'])->middleware('isAdmin', 'auth:sanctum');
 
-Route::get('/loginhistory', [LoginHistory::class, 'index'])->middleware('isAdmin')->name('loginHistory');
+Route::get('/loginhistory', [LoginHistory::class, 'index'])->middleware('isAdmin')->name('loginHistory', 'auth:sanctum');
 
-Route::get('/branch/importing/files', [LoanReleasesController::class, 'index'])->name('branchImport')->middleware('isHeadBranch', 'isDisabled');
+Route::get('/branch/importing/files', [LoanReleasesController::class, 'index'])->name('branchImport')->middleware('isHeadBranch', 'isDisabled', 'auth:sanctum');
 
-Route::get('/branch/importing/files/import', [LoanReleasesController::class, 'import'])->middleware('isHeadBranch' , 'isDisabled');;
+Route::get('/branch/importing/files/import', [LoanReleasesController::class, 'import'])->middleware('isHeadBranch' , 'isDisabled', 'auth:sanctum');;
 
-Route::post('/branch/importing/files/import/importing', [LoanReleasesController::class, 'loanImport'])->middleware('isHeadBranch' , 'isDisabled');;
+Route::post('/branch/importing/files/import/importing', [LoanReleasesController::class, 'loanImport'])->middleware('isHeadBranch' , 'isDisabled', 'auth:sanctum');;
 
-Route::get('/branch/generate/generatereport', [LoanReleasesController::class, 'generateReport'])->name('generateReport')->middleware('isHeadBranch' , 'isDisabled');; 
+Route::get('/branch/generate/generatereport', [LoanReleasesController::class, 'generateReport'])->name('generateReport')->middleware('isHeadBranch' , 'isDisabled', 'auth:sanctum');; 
 
 Route::get('/loan_list', [LoanReleasesController::class, 'loanReleaseAjax']);
 
-Route::get('/disabled/account', [DisabledController::class, 'disabled'])->middleware('isNotDisabled');
+Route::get('/disabled/account', [DisabledController::class, 'disabled'])->middleware('isNotDisabled', 'auth:sanctum');
 
 Route::get('/validateMonth', [LoanReleasesController::class, 'validateMonth']);
 
 Route::get('/validateYear', [LoanReleasesController::class, 'validateYear']);
 
-Route::get('/branch/importing/files/view/{id}', [LoanReleasesController::class, 'viewExcelFile'])->middleware('isHeadBranch', 'isDisabled');
+Route::get('/branch/importing/files/view/{id}', [LoanReleasesController::class, 'viewExcelFile'])->middleware('isHeadBranch', 'isDisabled', 'auth:sanctum');
 
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('isHeadBranch', 'isDisabled');
+Route::get('/branch/importing/files/view/headOffice/{year}', [LoanReleasesController::class, 'viewMonths'])->name('view_by_month');
+
+Route::get('/branch/importing/files/YearReport/{year}', [ReportController::class, 'yearReport']);
+
+Route::get('/showNoUpload', [LoanReleasesController::class, 'showNoUploadMonth']);
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('isHeadBranch', 'isDisabled', 'auth:sanctum');
 
 Route::get('/generateExcelFileLoanReleases' ,[ExportingExcelController::class , 'exportToExcel']);
 
 
-Route::post('/delete/record', [LoanReleasesController::class, 'deleteRecord']);
+Route::post('/delete/record', [LoanReleasesController::class, 'deleteRecord'])->middleware('auth:sanctum');
 
-Route::get('/productManagement', [ProductManagementController::class, 'productManagement'])->name('productManagement');
+Route::get('/productManagement', [ProductManagementController::class, 'productManagement'])->name('productManagement')->middleware('auth:sanctum');
 
-Route::post('/add/product', [ProductManagementController::class, 'addProduct']);
+Route::post('/add/product', [ProductManagementController::class, 'addProduct'])->middleware('auth:sanctum');
 
-Route::get('/findProduct', [ProductManagementController::class, 'findProduct']);
+Route::get('/findProduct', [ProductManagementController::class, 'findProduct'])->middleware('auth:sanctum');
+
+Route::get('/branch/importing/files/view/headOffice/{month}/{year}', [ShowBranches::class, 'show_branches_upload_or_not'])->middleware('auth:sanctum')->name('show-branch');
