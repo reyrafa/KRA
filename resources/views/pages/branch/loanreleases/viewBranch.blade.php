@@ -18,7 +18,7 @@
                         <th class="border">#</th>
                         <th class="border">Registered Branches</th>
                         <th class="border">Uploaded</th>
-                        <th class="border"><label for="" id="notUploaded">Not Uploaded</label></th>
+                        <th class="border"><label for="" id="notUploaded">No Upload</label></th>
                        
                     </thead>
                     <tbody>
@@ -50,7 +50,9 @@
                                         <td></td>
                                         <td><i class="fa-solid fa-square-check fa-2xl" style="color: #aa1808;"></i></td>
                                     @endif
-    
+                                    @php
+                                        $checker =0;
+                                    @endphp
                                 </tr>                         
                                 @endif
                             @endforeach

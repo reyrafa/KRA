@@ -21,9 +21,17 @@ class ReportController extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
+
+        /*==========================================================
+        ============ getting the highest month to be displayed on the template ====================
+        =========================================================================================*/
+        $monthForTheTemplate = ['','JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 
+        'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+        $monthMax = FileUploadModel::where('yearUploadID', $year)->max('monthUploadID');
+      
         //INITIALIZE HEADERS
         $sheet->setCellValue("A1" , "ORO INTEGRATED COOPERATIVE - HEAD OFFICE");
-        $sheet->setCellValue("A2" , "FOR THE YEAR OF ".$year ." - LOAN RELEASES PER PRODUCT");
+        $sheet->setCellValue("A2" , "FOR THE MONTH OF JANUARY TO ".$monthForTheTemplate[$monthMax]." ".$year ." - LOAN RELEASES PER PRODUCT");
         $sheet->setCellValue("A3" , "");
         $sheet->setCellValue("A4" , "");
         $sheet->setCellValue("A5" , "PRODUCT");
